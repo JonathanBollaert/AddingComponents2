@@ -1,0 +1,67 @@
+﻿@attribute [Route(AppRoutes.Account.SignIn)]
+
+@using PeopleManager.Dto.Requests
+@using PeopleManager.Sdk
+@using Vives.Presentation.Authentication
+
+@inject IdentitySdk IdentitySdk
+@inject IBearerTokenStore TokenStore
+
+<div class="row">
+    <div class="col-md-4">
+        <section>
+            <div class="form-floating mb-3">
+                <input type="text" @bind-value="Email" id="Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label for="Email" class="form-label">Email</label>
+            </div>
+            <div class="form-floating mb-3">
+                <input type="password" @bind-value="Password" id="Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                <label for="Password" class="form-label">Password</label>
+            </div>
+            <div class="checkbox mb-3">
+                <label for="RememberMe" class="form-label">
+                    <input type="checkbox" @bind-value="RememberMe" class="form-check-input" id="RememberMe" />
+                    Remember me
+                </label>
+            </div>
+            <div>
+                <button @onclick="Login" type="button" class="w-100 btn btn-lg btn-primary">Log in</button>
+            </div>
+        </section>
+    </div>
+</div>
+
+@code
+{
+    private string? Email { get; set; }
+    private string? Password { get; set; }
+    private bool RememberMe { get; set; }
+
+    private async Task Login()
+    {
+        if (string.IsNullOrWhiteSpace(Email))
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Password))
+        {
+            return;
+        }
+
+        var request = new SignInRequest
+            {
+                Username = Email,
+                Password = Password
+            };
+
+        var result = await IdentitySdk.SignIn(request);
+
+        if (!result.IsSuccess || string.IsNullOrWhiteSpace(result.Token))
+        {
+            return;
+        }
+
+        TokenStore.SetToken(result.Token);
+    }
+}

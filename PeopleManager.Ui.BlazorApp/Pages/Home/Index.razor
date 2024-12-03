@@ -1,0 +1,54 @@
+﻿@attribute [Route(AppRoutes.Home.Index)]
+
+@using PeopleManager.Dto.Results
+@using PeopleManager.Sdk
+@using Vives.Services.Model
+@using PeopleManager.Ui.BlazorApp.Components
+
+@inject PersonSdk PersonSdk
+
+<PageTitle>Home</PageTitle>
+
+<h1>Our employees</h1>
+
+@if (People is not null)
+{
+    <div class="row">
+        @foreach (var person in People)
+        {
+            <div class="col-3">
+                <Card>
+                    <Header>
+                        @person.FirstName @person.LastName
+                    </Header>
+                    <Body>
+                        <p>See the details <a href="@AppRoutes.Home.DetailsUrl(person.Id)">here</a>!</p>
+                    </Body>
+                    <Footer>
+                        <a href="mailto:@person.Email">@person.Email</a>
+                    </Footer>
+                </Card>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>Please hire some employees...</p>
+}
+
+@code
+{
+    private IList<PersonResult>? People { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var paging = new Paging { Limit = 100 };
+
+        var result = await PersonSdk.Find(paging);
+
+        People = result.Data;
+
+        await base.OnInitializedAsync();
+    }
+}

@@ -1,0 +1,45 @@
+﻿@attribute [Route(AppRoutes.People.Index)]
+
+@using PeopleManager.Dto.Results
+@using PeopleManager.Sdk
+@using Vives.Services.Model
+
+@inject PersonSdk PersonSdk
+
+<PageTitle>People</PageTitle>
+<h3>People</h3>
+
+<a class="btn btn-primary" href="@AppRoutes.People.Create">New Person</a>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Organization</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+        @foreach(var person in People){
+            <PersonRow Model="person"/>
+        }
+    </tbody>
+</table>
+
+@code {
+    private IList<PersonResult> People { get; set; } = new List<PersonResult>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var paging = new Paging { Limit = 1000 };
+        var result = await PersonSdk.Find(paging);
+        if (result.IsSuccess && result.Data is not null)
+        {
+            People = result.Data;
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

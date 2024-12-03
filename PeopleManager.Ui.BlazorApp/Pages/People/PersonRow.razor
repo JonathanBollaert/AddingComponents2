@@ -1,0 +1,44 @@
+﻿@using PeopleManager.Dto.Results
+
+@if (Model is not null)
+{
+    <tr>
+        <td>@Model.FirstName</td>
+        <td>@Model.LastName</td>
+        <td>
+            @if (!string.IsNullOrWhiteSpace(Model.Email))
+            {
+                <a href="mailto:@Model.Email">@Model.Email</a>
+            }
+        </td>
+        <td>
+            @if (Model.OrganizationId.HasValue)
+            {
+                @Model.OrganizationName
+            }
+            else
+            {
+                @: No Organization
+            }
+        </td>
+        <td>
+            <a class="btn btn-secondary" href="@AppRoutes.People.EditUrl(Model.Id)">Edit</a>
+            @* <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+            <button class="btn btn-danger"
+                    data-bs-toggle="modal"
+                    data-bs-target="#deleteModal"
+                    data-id="@Model.Id"
+                    data-mode="delete"
+                    data-first-name="@Model.FirstName"
+                    data-last-name="@Model.LastName"
+                    data-email="@Model.Email">
+                Delete with modal
+            </button> *@
+        </td>
+    </tr>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public PersonResult? Model { get; set; }
+}

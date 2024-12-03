@@ -1,0 +1,41 @@
+﻿@attribute [Route(AppRoutes.Home.Details)]
+
+@using PeopleManager.Dto.Results
+@using PeopleManager.Sdk
+
+@inject PersonSdk PersonSdk
+
+<h3>Details</h3>
+
+@if (Person is not null)
+{
+    <h1>Details of</h1>
+    <h2>@Person.FirstName @Person.LastName</h2>
+    @if (!string.IsNullOrWhiteSpace(Person.Email))
+    {
+        <p>Harass me here =&gt; <a href="mailto:@Person.Email">@Person.Email</a></p>
+    }
+    else
+    {
+        <p>Off grid...</p>
+    }
+}
+else
+{
+    <p>Sorry, who?</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private PersonResult? Person { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var person = await PersonSdk.Get(Id);
+        Person = person.Data;
+        await base.OnInitializedAsync();
+    }
+
+}

@@ -1,0 +1,10 @@
+﻿@attribute [Route(AppRoutes.People.Edit)]
+
+<h3>Edit</h3>
+
+<a class="btn btn-primary" href="@AppRoutes.People.Index">Back</a>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+}
